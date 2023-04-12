@@ -1,3 +1,9 @@
+Using Module '.\Scanner.psm1'
+Using Module '.\Parser.psm1'
+Using Module '.\Token.psm1'
+Using Module '.\Expr.psm1'
+Using Module '.\AstPrinter.psm1'
+
 Class Lox {
     Hidden [Boolean] $HadError = $False
 
@@ -23,11 +29,12 @@ Class Lox {
     {
         [Scanner] $Scanner = [Scanner]::new($Source)
         [System.Collections.Generic.List[Token]] $Tokens = $scanner.ScanTokens()
+        [Parser] $Parser = [Parser]::new($Tokens)
+        [Expr] $expression = $parser.Parse()
 
-        ForEach ($Token in $Tokens) 
-        {
-            Write-Output $Token
-        }
+        $astprinter = New-Object -Type AstPrinter
+
+        Write-Host $astprinter.Print($expression)
     }
 
     Static [Void] Error([Int] $Line, [String] $Message)

@@ -1,5 +1,5 @@
-Using Module '..\Token.psm1'
-Using Module '..\Expr.psm1'
+Using Module '.\Token.psm1'
+Using Module '.\Expr.psm1'
 
 Class AstPrinter : ExprVisitor
 {
@@ -10,7 +10,7 @@ Class AstPrinter : ExprVisitor
     [String] Visit([Literal] $expr) 
     {
         If ($null -Eq $expr.Value) { Return "nil" }
-        Return $expr.Value#.ToString()
+        Return $expr.Value.ToString()
     }
     [String] Visit([Unary] $expr) { Return $this.Parenthesize($expr.Operator.Lexeme, $expr.Right)}
 
@@ -19,14 +19,3 @@ Class AstPrinter : ExprVisitor
         Return "($Name $(ForEach ($expr in $exprs) { "$($expr.Accept($this))" }))"
     }
 }
-
-[Expr] $TestExpr = [Binary]::new(
-    [Unary]::New(
-        [Token]::New([TokenType]::MINUS, "-", $null, 1),
-        [Literal]::New(123)),
-    [Token]::New([TokenType]::STAR, "*", $null, 1),
-    [Grouping]::New(
-        [Literal]::New(45.67)))
-
-$astprinter = New-Object -Type AstPrinter
-Write-Host $astprinter.Print($TestExpr)

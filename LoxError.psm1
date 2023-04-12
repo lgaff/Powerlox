@@ -1,3 +1,4 @@
+Using Module '.\Token.psm1'
 class LoxError {
     
     # Singleton stuff up front. This is intended to be a global
@@ -21,6 +22,12 @@ class LoxError {
     [Void] SetError() { $this.HadError = $true }
     [Void] ClearError() { $this.HadError = $false }
     
+    [Void] Error([Token] $token, [String] $message)
+    {
+        If ($token.Type -Eq [TokenType]::EOF) { $this.Report($token.Line, " at end", $message) }
+        Else { $this.Report($token.Line, " at '$($token.Lexeme)'", $message) }
+    }
+
     [Void] Error([Int] $Line, [String] $Message)
     {   
         $this.Report($Line, "", $Message)
@@ -32,3 +39,5 @@ class LoxError {
         $this.SetError()
     }
 }
+
+class ParseError : System.Management.Automation.RuntimeException { }
